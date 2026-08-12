@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ehtesham Hassan | Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        dark: {
+                            900: '#0B0F19', // Deep dark blue/black
+                            800: '#111827',
+                            700: '#1F2937',
+                        }
+                    },
+                    animation: {
+                        blob: "blob 7s infinite",
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            "0%": { transform: "translate(0px, 0px) scale(1)" },
+                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
+                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                            "100%": { transform: "translate(0px, 0px) scale(1)" },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0B0F19;
+            color: #f8fafc;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor for desktop */
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4f46e5; }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #818cf8;
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(129, 140, 248, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        /* Disable custom cursor on touch devices */
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor-dot, .cursor-outline { display: none; }
+        }
+
+        /* Glassmorphism & Gradients */
+        .gradient-text {
+            background: linear-gradient(135deg, #a5b4fc, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientMove 5s ease infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .glass-card {
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 40px -10px rgba(99, 102, 241, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Scroll Reveal Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Skill Pill Hover Effect */
+        .skill-pill {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-pill::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        .skill-pill:hover::before { left: 100%; }
+        .skill-pill:hover {
+            transform: scale(1.05);
+            border-color: #6366f1;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Custom Notification Toast */
+        #toast {
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="antialiased selection:bg-brand-500 selection:text-white relative">
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Animated Background Blobs -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-blob"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-32 left-1/2 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <header class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
+        <div class="absolute inset-0 bg-dark-900/80 backdrop-blur-md border-b border-white/5"></div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-2xl font-black tracking-tighter group hover-trigger">
+                        Ehtesham<span class="text-brand-500 transition-colors duration-300 group-hover:text-purple-400">.</span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Nav -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-1">
+                        <a href="#about" class="nav-link px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">About</a>
+                        <a href="#skills" class="nav-link px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">Skills</a>
+                        <a href="#projects" class="nav-link px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">Projects</a>
+                        <a href="#achievements" class="nav-link px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">Achievements</a>
+                    </div>
+                </div>
+
+                <div class="hidden md:block">
+                    <a href="#contact" class="hover-trigger relative inline-flex h-10 items-center justify-center overflow-hidden rounded-full bg-brand-600 px-6 font-medium text-white transition-all duration-300 hover:bg-brand-500 hover:scale-105 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)]">
+                        <span>Contact Me</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Nav Dropdown -->
+        <div id="mobile-menu" class="md:hidden hidden bg-dark-800 border-b border-white/5 absolute w-full">
+            <div class="px-4 pt-2 pb-6 space-y-2 shadow-2xl">
+                <a href="#about" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">About</a>
+                <a href="#skills" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Skills</a>
+                <a href="#projects" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Projects</a>
+                <a href="#achievements" class="block px-3 py-3 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-white/5">Achievements</a>
+                <a href="#contact" class="block px-3 py-3 mt-4 text-center rounded-md text-base font-medium bg-brand-600 text-white">Contact Me</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section class="min-h-[90vh] flex items-center relative overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div class="w-full md:w-3/5 space-y-6 reveal">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-sm font-mono mb-4">
+                            <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                            Available for opportunities
+                        </div>
+                        
+                        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1]">
+                            Hi, I'm Ehtesham<br>
+                            <span class="text-3xl md:text-5xl text-gray-400 mt-2 block h-[1.2em]">
+                                I build <span id="typewriter" class="gradient-text"></span><span class="animate-pulse text-brand-500">|</span>
+                            </span>
+                        </h1>
+                        
+                        <p class="text-gray-400 text-lg md:text-xl max-w-xl leading-relaxed font-light">
+                            Motivated Software Developer with strong programming fundamentals. Quick learner, eager to explore new technologies, and committed to creating efficient, reliable software solutions.
+                        </p>
+                        
+                        <div class="flex flex-wrap items-center gap-4 pt-6">
+                            <a href="#projects" class="hover-trigger group relative px-8 py-3 bg-white text-dark-900 rounded-full font-bold overflow-hidden transition-transform hover:scale-105">
+                                <div class="absolute inset-0 w-full h-full bg-brand-100 transform translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out"></div>
+                                <span class="relative flex items-center gap-2">View Work <i class="fa-solid fa-arrow-right -rotate-45 group-hover:rotate-0 transition-transform"></i></span>
+                            </a>
+                            
+                            <button onclick="copyEmail()" class="hover-trigger glass-card px-8 py-3 rounded-full font-semibold text-white flex items-center gap-3 group">
+                                <i class="fa-regular fa-envelope group-hover:text-brand-400 transition-colors"></i> 
+                                <span id="email-text">ehteshamhassan435@gmail.com</span>
+                                <i class="fa-regular fa-copy text-sm opacity-50 group-hover:opacity-100"></i>
+                            </button>
+                            
+                            <div class="flex gap-3 ml-2">
+                                <a href="https://linkedin.com" target="_blank" class="hover-trigger w-12 h-12 flex items-center justify-center rounded-full glass-card text-gray-300 hover:text-white hover:bg-brand-600 transition-all hover:scale-110">
+                                    <i class="fa-brands fa-linkedin-in text-xl"></i>
+                                </a>
+                                <a href="https://github.com" target="_blank" class="hover-trigger w-12 h-12 flex items-center justify-center rounded-full glass-card text-gray-300 hover:text-white hover:bg-brand-600 transition-all hover:scale-110">
+                                    <i class="fa-brands fa-github text-xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decorative Graphic element -->
+                    <div class="hidden md:flex w-2/5 justify-center relative reveal animate-float">
+                        <div class="w-72 h-72 rounded-full bg-gradient-to-tr from-brand-600 to-purple-600 opacity-20 blur-2xl absolute"></div>
+                        <div class="glass-card w-64 h-80 rounded-2xl border border-white/10 p-6 flex flex-col justify-between relative z-10 backdrop-blur-xl bg-dark-800/40 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                            <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                                <div class="flex space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <i class="fa-solid fa-code text-gray-500"></i>
+                            </div>
+                            <div class="font-mono text-sm text-brand-300 space-y-2 mt-4 flex-grow">
+                                <p><span class="text-pink-400">const</span> <span class="text-yellow-200">developer</span> = {</p>
+                                <p class="pl-4">name: <span class="text-green-300">'Ehtesham'</span>,</p>
+                                <p class="pl-4">role: <span class="text-green-300">'Software Eng'</span>,</p>
+                                <p class="pl-4">passion: <span class="text-green-300">'AI & Code'</span></p>
+                                <p>}</p>
+                                <p class="mt-4 text-gray-500 animate-pulse">_</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+                <span class="text-xs uppercase tracking-widest font-mono">Scroll</span>
+                <i class="fa-solid fa-arrow-down text-sm"></i>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-4 mb-12 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold">Education Journey</h2>
+                    <div class="h-[1px] bg-gradient-to-r from-brand-500 to-transparent flex-grow max-w-xs"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- College -->
+                    <div class="glass-card p-8 rounded-2xl relative overflow-hidden group reveal">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand-500/20 rounded-full blur-2xl group-hover:bg-brand-500/40 transition-all duration-500"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-dark-700 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-graduation-cap text-2xl text-brand-400"></i>
+                            </div>
+                            <span class="text-brand-300 font-mono text-sm px-3 py-1 bg-brand-500/10 rounded-full">2023 - 2027</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-white">B.Tech Computer Science & Engineering</h3>
+                        <p class="text-gray-400 text-lg font-medium">Greater Noida Institute of Technology</p>
+                    </div>
+                    
+                    <!-- Schooling -->
+                    <div class="glass-card p-8 rounded-2xl relative overflow-hidden group reveal" style="transition-delay: 100ms;">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-purple-500/20 rounded-full blur-2xl group-hover:bg-purple-500/40 transition-all duration-500"></div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-dark-700 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-school text-2xl text-purple-400"></i>
+                            </div>
+                            <span class="text-purple-300 font-mono text-sm px-3 py-1 bg-purple-500/10 rounded-full">2021 - 2023</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2 text-white">High School (PCM) & Secondary</h3>
+                        <p class="text-gray-400 text-lg font-medium mb-4">St. Karen's High School, CBSE</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="py-24 bg-dark-800/30 border-y border-white/5 relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-4 mb-16 reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold">Technical Arsenal</h2>
+                    <div class="h-[1px] bg-gradient-to-r from-brand-500 to-transparent flex-grow max-w-xs"></div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <!-- Languages -->
+                    <div class="reveal">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-gray-200">
+                            <i class="fa-solid fa-code text-brand-500"></i> Languages
+                        </h3>
+                        <div class="flex flex-wrap gap-3 font-mono">
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-gray-300">C/C++</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-blue-300">Python</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-red-300">Java</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-yellow-300">SQL</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-orange-300">HTML/CSS/JS</span>
+                        </div>
+                    </div>
+
+                    <!-- Libraries & AI -->
+                    <div class="reveal" style="transition-delay: 100ms;">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-gray-200">
+                            <i class="fa-solid fa-brain text-purple-500"></i> Libraries & AI
+                        </h3>
+                        <div class="flex flex-wrap gap-3 font-mono">
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-teal-300">NumPy</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-indigo-300">Pandas</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-purple-300">Scikit-learn</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-green-300">OpenCV</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-blue-400">MediaPipe</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-pink-300">Matplotlib</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-gray-300">SQLite3</span>
+                        </div>
+                    </div>
+
+                    <!-- Tools & Cloud -->
+                    <div class="reveal" style="transition-delay: 200ms;">
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-3 text-gray-200">
+                            <i class="fa-solid fa-wrench text-blue-500"></i> Tools & Cloud
+                        </h3>
+                        <div class="flex flex-wrap gap-3 font-mono">
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-gray-300">Git/GitHub</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-orange-400">AWS</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-blue-300">Tableau</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-yellow-500">PowerBI</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-gray-300">Linux/Windows</span>
+                            <span class="skill-pill hover-trigger px-5 py-2.5 bg-dark-700/50 rounded-xl text-sm border border-white/5 text-blue-400">VSCode</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="py-24 relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between mb-12 reveal">
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-3xl md:text-4xl font-bold">Featured Projects</h2>
+                        <div class="h-[1px] bg-gradient-to-r from-brand-500 to-transparent w-24 md:w-48"></div>
+                    </div>
+                    <a href="https://github.com" target="_blank" class="hover-trigger text-brand-400 hover:text-brand-300 font-medium flex items-center gap-2 group hidden sm:flex">
+                        View GitHub <i class="fa-brands fa-github text-xl group-hover:scale-110 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Project 1: OpenCV -->
+                    <div class="glass-card hover-trigger rounded-2xl p-1 overflow-hidden group reveal">
+                        <div class="bg-dark-800 rounded-xl p-8 h-full flex flex-col relative z-10">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-brand-500/10 rounded-bl-full -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150 group-hover:bg-brand-500/20"></div>
+                            <div class="flex justify-between items-start mb-6 relative">
+                                <div class="p-3 bg-brand-500/20 rounded-lg text-brand-400">
+                                    <i class="fa-solid fa-hand-sparkles text-2xl"></i>
+                                </div>
+                                <a href="#" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-brand-300 transition-colors">OpenCV Hand Interaction</h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed flex-grow">
+                                Developed Python, OpenCV, & MediaPipe apps for real-time gesture tracking. Engineered vector-based physics and collision detection. Built a 2-player CV game and a dynamic "Magic Square Lens" filter using NumPy masking.
+                            </p>
+                            <div class="flex flex-wrap gap-2 font-mono text-xs">
+                                <span class="text-brand-300 bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">Python</span>
+                                <span class="text-brand-300 bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">OpenCV</span>
+                                <span class="text-brand-300 bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">MediaPipe</span>
+                                <span class="text-brand-300 bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">NumPy</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: AI Spam -->
+                    <div class="glass-card hover-trigger rounded-2xl p-1 overflow-hidden group reveal" style="transition-delay: 100ms;">
+                        <div class="bg-dark-800 rounded-xl p-8 h-full flex flex-col relative z-10">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-bl-full -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150 group-hover:bg-purple-500/20"></div>
+                            <div class="flex justify-between items-start mb-6 relative">
+                                <div class="p-3 bg-purple-500/20 rounded-lg text-purple-400">
+                                    <i class="fa-solid fa-shield-halved text-2xl"></i>
+                                </div>
+                                <a href="#" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-purple-300 transition-colors">AI Spam Classifier</h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed flex-grow">
+                                Built an NLP text classification model to automatically identify and filter SMS messages as spam or legitimate. Utilized TF-IDF vectorization and Multinomial Naive Bayes, achieving ~96%-98% accuracy on test data.
+                            </p>
+                            <div class="flex flex-wrap gap-2 font-mono text-xs">
+                                <span class="text-purple-300 bg-purple-500/10 px-3 py-1.5 rounded-full border border-purple-500/20">Python</span>
+                                <span class="text-purple-300 bg-purple-500/10 px-3 py-1.5 rounded-full border border-purple-500/20">Scikit-learn</span>
+                                <span class="text-purple-300 bg-purple-500/10 px-3 py-1.5 rounded-full border border-purple-500/20">NLP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Expense Manager -->
+                    <div class="glass-card hover-trigger rounded-2xl p-1 overflow-hidden group reveal">
+                        <div class="bg-dark-800 rounded-xl p-8 h-full flex flex-col relative z-10">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-bl-full -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150 group-hover:bg-green-500/20"></div>
+                            <div class="flex justify-between items-start mb-6 relative">
+                                <div class="p-3 bg-green-500/20 rounded-lg text-green-400">
+                                    <i class="fa-solid fa-chart-pie text-2xl"></i>
+                                </div>
+                                <a href="#" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-green-300 transition-colors">Expense Manager</h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed flex-grow">
+                                A Python project to securely track and visualize daily expenses. Implemented data visualization using Matplotlib to generate insightful financial charts and utilized SQLite3 for reliable data storage.
+                            </p>
+                            <div class="flex flex-wrap gap-2 font-mono text-xs">
+                                <span class="text-green-300 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">Python</span>
+                                <span class="text-green-300 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">SQLite3</span>
+                                <span class="text-green-300 bg-green-500/10 px-3 py-1.5 rounded-full border border-green-500/20">Matplotlib</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4: Memory Card Game -->
+                    <div class="glass-card hover-trigger rounded-2xl p-1 overflow-hidden group reveal" style="transition-delay: 100ms;">
+                        <div class="bg-dark-800 rounded-xl p-8 h-full flex flex-col relative z-10">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-bl-full -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-150 group-hover:bg-orange-500/20"></div>
+                            <div class="flex justify-between items-start mb-6 relative">
+                                <div class="p-3 bg-orange-500/20 rounded-lg text-orange-400">
+                                    <i class="fa-solid fa-gamepad text-2xl"></i>
+                                </div>
+                                <a href="#" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/5 transition-colors"><i class="fa-solid fa-arrow-up-right-from-square text-xl"></i></a>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-3 text-white group-hover:text-orange-300 transition-colors">Memory Card Game</h3>
+                            <p class="text-gray-400 text-sm mb-6 leading-relaxed flex-grow">
+                                A simple, interactive memory card matching game. Players flip cards to find matching pairs. Implemented fully responsive web design to ensure optimal layout and gameplay experience across all devices.
+                            </p>
+                            <div class="flex flex-wrap gap-2 font-mono text-xs">
+                                <span class="text-orange-300 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">HTML5</span>
+                                <span class="text-orange-300 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">CSS3</span>
+                                <span class="text-orange-300 bg-orange-500/10 px-3 py-1.5 rounded-full border border-orange-500/20">JavaScript</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="achievements" class="py-24 bg-dark-800/30 border-t border-white/5 relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row gap-16">
+                    
+                    <!-- Achievements Timeline -->
+                    <div class="w-full md:w-1/2 reveal">
+                        <div class="flex items-center gap-4 mb-10">
+                            <h2 class="text-3xl font-bold">Achievements & Roles</h2>
+                        </div>
+                        
+                        <div class="relative border-l border-brand-500/30 ml-4 space-y-10 pb-4">
+                            <!-- SIH -->
+                            <div class="relative pl-8 group hover-trigger">
+                                <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-dark-900 border-2 border-brand-500 group-hover:bg-brand-500 transition-colors shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
+                                <h4 class="text-xl font-bold text-white group-hover:text-brand-300 transition-colors">Smart India Hackathon (SIH-2025)</h4>
+                                <span class="text-brand-400 text-sm font-mono block mb-2 mt-1">National Level Event</span>
+                                <p class="text-gray-400 text-sm">Participated as a core team member in solving complex problem statements presented at the national level.</p>
+                            </div>
+                            
+                            <!-- Drawing -->
+                            <div class="relative pl-8 group hover-trigger">
+                                <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-dark-900 border-2 border-brand-500 group-hover:bg-brand-500 transition-colors"></div>
+                                <h4 class="text-xl font-bold text-white group-hover:text-brand-300 transition-colors">1st Prize - Inter-School Drawing</h4>
+                                <span class="text-brand-400 text-sm font-mono block mb-2 mt-1">Creative Competition</span>
+                                <p class="text-gray-400 text-sm">Secured first place in a highly competitive multi-school drawing and creative arts competition.</p>
+                            </div>
+                            
+                            <!-- Social Media -->
+                            <div class="relative pl-8 group hover-trigger">
+                                <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-dark-900 border-2 border-brand-500 group-hover:bg-brand-500 transition-colors"></div>
+                                <h4 class="text-xl font-bold text-white group-hover:text-brand-300 transition-colors">College Social Media Club</h4>
+                                <span class="text-brand-400 text-sm font-mono block mb-2 mt-1">Member & Content Creator</span>
+                                <p class="text-gray-400 text-sm">Managing, designing, and creating engaging digital content for college social media platforms including Instagram and Facebook.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certifications Grid -->
+                    <div class="w-full md:w-1/2 reveal" style="transition-delay: 150ms;">
+                        <div class="flex items-center gap-4 mb-10">
+                            <h2 class="text-3xl font-bold">Certifications</h2>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="glass-card p-5 rounded-xl flex items-center gap-4 hover-trigger border-l-4 border-l-orange-500">
+                                <i class="fa-brands fa-aws text-3xl text-gray-400"></i>
+                                <div>
+                                    <h4 class="font-bold text-white leading-tight">AWS Job Simulation</h4>
+                                    <p class="text-xs text-orange-400 font-mono mt-1">Forage</p>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card p-5 rounded-xl flex items-center gap-4 hover-trigger border-l-4 border-l-blue-500">
+                                <i class="fa-solid fa-database text-3xl text-gray-400"></i>
+                                <div>
+                                    <h4 class="font-bold text-white leading-tight">SQL Certification</h4>
+                                    <p class="text-xs text-blue-400 font-mono mt-1">IBM</p>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card p-5 rounded-xl flex items-center gap-4 hover-trigger border-l-4 border-l-yellow-500">
+                                <i class="fa-solid fa-chart-pie text-3xl text-gray-400"></i>
+                                <div>
+                                    <h4 class="font-bold text-white leading-tight">Data Science</h4>
+                                    <p class="text-xs text-yellow-400 font-mono mt-1">IBM</p>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card p-5 rounded-xl flex items-center gap-4 hover-trigger border-l-4 border-l-brand-500">
+                                <i class="fa-solid fa-c text-3xl text-gray-400"></i>
+                                <div>
+                                    <h4 class="font-bold text-white leading-tight">C++ Programming</h4>
+                                    <p class="text-xs text-brand-400 font-mono mt-1">IITK</p>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card p-5 rounded-xl flex items-center gap-4 hover-trigger border-l-4 border-l-purple-500">
+                                <i class="fa-solid fa-brain text-3xl text-gray-400"></i>
+                                <div>
+                                    <h4 class="font-bold text-white leading-tight">GEN-AI Basics</h4>
+                                    <p class="text-xs text-purple-400 font-mono mt-1">NASSCOM</p>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card p-5 rounded-xl flex items-center gap-4 hover-trigger border-l-4 border-l-green-500">
+                                <i class="fa-solid fa-code-compare text-3xl text-gray-400"></i>
+                                <div>
+                                    <h4 class="font-bold text-white leading-tight">Trio-Hackathon</h4>
+                                    <p class="text-xs text-green-400 font-mono mt-1">GNIOT</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact" class="bg-dark-900 border-t border-white/5 py-16 relative overflow-hidden">
+        <!-- Background element -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-brand-600/10 blur-[120px] rounded-[100%] pointer-events-none"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10 reveal">
+            <h2 class="text-4xl font-black mb-6">Let's Build Something.</h2>
+            <p class="text-gray-400 mb-10 text-lg max-w-2xl mx-auto">
+                Currently looking for new opportunities and collaborations. My inbox is always open. Whether you have a question or just want to say hi, I'll get back to you!
+            </p>
+            
+            <div class="flex justify-center items-center gap-6 mb-12">
+                <a href="mailto:ehteshamhassan435@gmail.com" class="hover-trigger group w-14 h-14 bg-dark-800 rounded-full flex items-center justify-center border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all">
+                    <i class="fa-solid fa-envelope text-2xl text-gray-400 group-hover:text-brand-400 transition-colors"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="hover-trigger group w-14 h-14 bg-dark-800 rounded-full flex items-center justify-center border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all">
+                    <i class="fa-brands fa-linkedin text-2xl text-gray-400 group-hover:text-brand-400 transition-colors"></i>
+                </a>
+                <a href="https://github.com" target="_blank" class="hover-trigger group w-14 h-14 bg-dark-800 rounded-full flex items-center justify-center border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all">
+                    <i class="fa-brands fa-github text-2xl text-gray-400 group-hover:text-brand-400 transition-colors"></i>
+                </a>
+                <a href="tel:+917091304502" class="hover-trigger group w-14 h-14 bg-dark-800 rounded-full flex items-center justify-center border border-white/10 hover:border-brand-500 hover:bg-brand-500/10 transition-all">
+                    <i class="fa-solid fa-phone text-2xl text-gray-400 group-hover:text-brand-400 transition-colors"></i>
+                </a>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-mono gap-4">
+                <p>&copy; <script>document.write(new Date().getFullYear())</script> Ehtesham Hassan.</p>
+                <p>Designed & Built with <i class="fa-solid fa-heart text-brand-500 mx-1"></i> & Tailwind CSS</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-brand-600 text-white px-6 py-3 rounded-xl shadow-lg font-medium flex items-center gap-3 z-50">
+        <i class="fa-solid fa-check-circle"></i> Email copied to clipboard!
+    </div>
+
+    <script>
+        // --- 1. Custom Cursor Logic ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        // Only run on non-touch devices
+        if (window.matchMedia("(pointer: fine)").matches) {
+            window.addEventListener('mousemove', (e) => {
+                const posX = e.clientX;
+                const posY = e.clientY;
+                
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+                
+                // Add slight delay to outline for smooth effect
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 150, fill: "forwards" });
+            });
+
+            // Interactive hover state for links and buttons
+            const interactiveElements = document.querySelectorAll('a, button, .hover-trigger');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorOutline.style.width = '60px';
+                    cursorOutline.style.height = '60px';
+                    cursorOutline.style.backgroundColor = 'rgba(129, 140, 248, 0.1)';
+                    cursorOutline.style.borderColor = 'rgba(129, 140, 248, 0.8)';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorOutline.style.width = '40px';
+                    cursorOutline.style.height = '40px';
+                    cursorOutline.style.backgroundColor = 'transparent';
+                    cursorOutline.style.borderColor = 'rgba(129, 140, 248, 0.5)';
+                });
+            });
+        }
+
+        // --- 2. Typing Effect Logic ---
+        const words = ["Web Apps.", "AI Models.", "Software.", "Solutions."];
+        let i = 0;
+        let timer;
+
+        function typingEffect() {
+            let word = words[i].split("");
+            var loopTyping = function() {
+                if (word.length > 0) {
+                    document.getElementById('typewriter').innerHTML += word.shift();
+                } else {
+                    deletingEffect();
+                    return false;
+                }
+                timer = setTimeout(loopTyping, 150);
+            };
+            loopTyping();
+        }
+
+        function deletingEffect() {
+            let word = words[i].split("");
+            var loopDeleting = function() {
+                if (word.length > 0) {
+                    word.pop();
+                    document.getElementById('typewriter').innerHTML = word.join("");
+                } else {
+                    if (words.length > (i + 1)) {
+                        i++;
+                    } else {
+                        i = 0;
+                    }
+                    typingEffect();
+                    return false;
+                }
+                timer = setTimeout(loopDeleting, 100);
+            };
+            setTimeout(loopDeleting, 2000); // Wait before deleting
+        }
+        
+        // Start typing effect on load
+        window.onload = function() {
+            typingEffect();
+        };
+
+        // --- 3. Scroll Reveal Animation Logic (Intersection Observer) ---
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Optional: stop observing once revealed
+                    // revealObserver.unobserve(entry.target); 
+                }
+            });
+        }, {
+            threshold: 0.15, // Trigger when 15% visible
+            rootMargin: "0px 0px -50px 0px"
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // --- 4. Mobile Menu & Navbar Logic ---
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const navbar = document.getElementById('navbar');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar styling on scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg');
+            } else {
+                navbar.classList.remove('shadow-lg');
+            }
+        });
+
+        // --- 5. Copy Email Function ---
+        function copyEmail() {
+            const email = "ehteshamhassan435@gmail.com";
+            // Fallback for document.execCommand if navigator.clipboard is unavailable in iframe
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(email).then(showToast);
+            } else {
+                let textArea = document.createElement("textarea");
+                textArea.value = email;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast();
+                } catch (error) {
+                    console.error('Copy failed', error);
+                }
+                textArea.remove();
+            }
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
